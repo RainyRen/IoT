@@ -6,9 +6,9 @@ import sys
 MQTT_SERVER = "gpssensor.ddns.net"
 MQTT_PORT = 1883
 MQTT_ALIVE = 60
-#MQTT_TOPIC = "LASS/Test/PM25"
+MQTT_TOPIC = "LASS/Test/PM25"
 #MQTT_TOPIC = "DeveloperTest"
-MQTT_TOPIC = "LASS/Test/#"
+#MQTT_TOPIC = "LASS/Test/#"
 
 LASS_DEVICE_ID="Rainy_Temp_Humi_Dust"
 # *********************************************************************
@@ -30,18 +30,21 @@ def on_message(client, userdata, msg):
         if item == '':
             continue 
         pairs = re.split('=',item)
-        #print "pairs[0]: " + pairs[0]
-        #print "pairs[1]: " + pairs[1]
+        # print "pairs[0]: " + pairs[0]
+        # print "pairs[1]: " + pairs[1]
         if (len(items)==1):
             continue
         if (pairs[0] == "device_id"):
             value_devId = pairs[1]
         elif (pairs[0] == "s_d0"):
             value_dust = pairs[1]
+            print "dust: " + pairs[1]
         elif (pairs[0] == "s_t0"):
             value_temperature = pairs[1]
+            print "temperature: " + pairs[1]
         elif (pairs[0] == "s_h0"):
             value_humidity = pairs[1]
+            print "humidity" + pairs[1]
 
     try:
         print "value_devId:" + value_devId

@@ -9,11 +9,12 @@ import time
 MQTT_SERVER = "gpssensor.ddns.net"
 MQTT_PORT = 1883
 MQTT_ALIVE = 3600
-MQTT_TOPIC = "LASS/Test/#"
+# MQTT_TOPIC = "LASS/Test/#"
+MQTT_TOPIC = "LASS/Test/PM25"
 #MQTT_TOPIC = "DeveloperTest"
 
 LASS_DEVICE_ID="Rainy_Temp_Humi_Dust"
-ThingSpeak_API_Key = "SXGI1HG16NIQVBIK"
+ThingSpeak_API_Key = "CD5RLKU3XB6HUFA6"
 # *********************************************************************
 
 # The callback for when the client receives a CONNACK response from the server.

@@ -7,5 +7,5 @@ import time
 
 # now = datetime.datetime.now()
 # date_text = now.strftime('%H:%M:%S.%f')
-date_text = time.strftime('%y/%m/%d')
+date_text = time.strftime('%c')
 print date_text	
