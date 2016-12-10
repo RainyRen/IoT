@@ -73,6 +73,10 @@ while True:
     packstr_sensor="|s_t0=%s|s_h0=%s|s_d0=%s" %(t0,h0,d0)
     payload = packstr + packstr_fix + packstr_sensor
 
+    packstr_fix = "|tick=%i|date=%s|time=%s|gps_fix=%i|gps_num=%i|gps_alt=%i|gps_lat=%f|gps_lon=%f" % (tick,datestr,timestr,gps_fix,gps_num,gps_alt,gps_lat,gps_lon)
+    datestr=time.strftime('%y-%m-%d')
+	timestr=time.strftime('%H:%M:%S')
+
     print "send payload: " + payload
     print "packstr_sensor: " + packstr_sensor
 

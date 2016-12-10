@@ -1,6 +1,7 @@
 // OLED
 #include <Wire.h>  //載入I2C函式庫
 #include <SeeedOLED.h> //載入SeeedOLED函式庫
+#include <HttpClient.h>
 
 // DHT
 #include "DHT.h"

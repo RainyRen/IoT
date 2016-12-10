@@ -4,6 +4,8 @@ import threading
 import logging
 import mraa
 
+sys.path.insert(0, '/usr/lib/python2.7/bridge/') 
+from bridgeclient import BridgeClient as bridgeclient
 # change this to the values from MCS web console
 DEVICE_INFO = {
     'device_id' : 'DJRs0jHX',
@@ -62,18 +64,21 @@ def waitAndExecuteCommand(commandChannel):
 
 pin = None
 def setupLED():
-    global pin
+    #global pin
     # on LinkIt Smart 7699, pin 44 is the Wi-Fi LED.
-    pin = mraa.Gpio(44)
-    pin.dir(mraa.DIR_OUT)
+    #pin = mraa.Gpio(44)
+    #pin.dir(mraa.DIR_OUT)
+    global operat
 
 def setLED(state):
     # Note the LED is "reversed" to the pin's GPIO status.
     # So we reverse it here.
     if state:
-        pin.write(0)
+        # pin.write(0)
+        bridge.put("led", '0')
     else:
-        pin.write(1)
+        #pin.write(1)
+        bridge.put("led", '1')
 
 if __name__ == '__main__':
     setupLED()
