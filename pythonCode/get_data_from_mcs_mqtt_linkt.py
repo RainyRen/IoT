@@ -10,9 +10,11 @@
 # *********************************************************************
 
 import paho.mqtt.client as mqtt
+import sys 
 
-# sys.path.insert(0, '/usr/lib/python2.7/bridge/')
-# from bridgeclient import BridgeClient as bridgeclient
+sys.path.insert(0, '/usr/lib/python2.7/bridge/')
+from bridgeclient import BridgeClient as bridgeclient
+value = bridgeclient()
 
 deviceId = "DJRs0jHX"
 deviceKey = "GLBhC0Rrpj6p2KEW"
@@ -37,13 +39,13 @@ def on_message(client, userdata, msg):
 
 def commadSend(commadType, dataString):
 	if commadType == "Notification":
-		#value.put("i", dataString)
+		value.put("i", dataString)
 
-		if dataString == "1":
-			print "1"
+		# if dataString == "1":
+		# 	print "1"
 
-		if dataString == "2":
-			print "2"
+		# if dataString == "2":
+		# 	print "2"
 
     # print message[2]
 

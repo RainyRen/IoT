@@ -17,7 +17,7 @@ import paho.mqtt.client as mqtt
 import requests
 import httplib, urllib
 import time
-import sys  
+import sys
 import json
 
 sys.path.insert(0, '/usr/lib/python2.7/bridge/') 
@@ -33,6 +33,8 @@ dataChnId1 = "Temperature"
 dataChnId2 = "Humidity"
 dataChnId3 = "Dust"
 dataChnId4 = "GPS"
+dataChnId5 = "LED_state"
+dataChnId6 = "AwokeTime"
 getChnId1 = "LED"
 MQTT_SERVER = "mqtt.mcs.mediatek.com"
 MQTT_PORT = 1883
@@ -47,6 +49,19 @@ MQTT_TOPIC_MONITOR = "mcs/" + deviceId + "/" + deviceKey + "/" + getChnId1
 gps_alt = 0
 gps_lat = 25.018531
 gps_lon = 121.536753
+LED_state = "0"
+# *********************************************************************
+# Time Zone Calibration
+# currentTime = ntplib.NTPClient() 
+# response = currentTime.request('pool.ntp.org')
+# ts = response.tx_time 
+# _date = time.strftime('%Y-%m-%d',time.localtime(ts)) 
+# _time = time.strftime('%X',time.localtime(ts)) 
+
+
+# print "Finished Time Zone Claibration"
+# print "********************************"
+# print _date + " " + _time 
 # *********************************************************************
 
 mqtt_client = mqtt.Client()
@@ -67,7 +82,7 @@ def post_to_mcs(payload):
 
     conn.request("POST", "/mcs/v2/devices/" + deviceId + "/datapoints", json.dumps(payload), headers)
     response = conn.getresponse()
-    #print( response.status, response.reason, json.dumps(payload), time.strftime("%c"))
+    # print( response.status, response.reason, json.dumps(payload), time.strftime("%c"))
     print response.status
     data = response.read()
     conn.close()
@@ -97,11 +112,21 @@ def establishCommandChannel():
 # mqtt_client.loop_start()
 
 while True:
+    datestr = time.strftime('%y-%m-%d')
+    timestr = time.strftime('%H:%M:%S')
+    awoke = time.strftime('%H')
+    print timestr
+    print time.time 
+
+
     h0 = value.get("h")
     t0 = value.get("t")
     d0 = value.get("d")
+    
+    #print type(t0)
 
-    # value.put("alert", 123)
+    #value.put("alert", 123)
+
 # ***********************************************************************
     # MQTT clint publish data
     payload = {"dataChnId":dataChnId1,"value":t0}
@@ -121,7 +146,7 @@ while True:
     mqtt_client.publish(MQTT_TOPIC3, json.dumps(payload), qos=0)
 # ************************************************************************
     #  Http clint send data
-    payload2 = {"datapoints":[{"dataChnId":dataChnId2,"values":{"value":h0}}, {"dataChnId":dataChnId1,"values":{"value":t0}}, {"dataChnId":dataChnId3,"values":{"value":d0}}, {"dataChnId":dataChnId4,"values":{"latitude":gps_lat, "longitude":gps_lon, "altitude": gps_alt}}]}
+    payload2 = {"datapoints":[{"dataChnId":dataChnId2,"values":{"value":h0}}, {"dataChnId":dataChnId1,"values":{"value":t0}}, {"dataChnId":dataChnId3,"values":{"value":d0}}, {"dataChnId":dataChnId4,"values":{"latitude":gps_lat, "longitude":gps_lon, "altitude": gps_alt}}, {"dataChnId":dataChnId5,"values":{"value":LED_state}}, {"dataChnId":dataChnId6,"values":{"value":8}}]}
     post_to_mcs(payload2)
 # ************************************************************************
     # mqtt_client.on_connect = on_connect

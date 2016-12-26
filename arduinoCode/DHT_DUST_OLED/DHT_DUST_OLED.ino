@@ -1,7 +1,14 @@
+//按鈕
+const int buttonPin = 5;
+int buttonState = 0;
+int buttonState_old = 0;
+bool stateChange = false;
+
 // OLED
 #include <Wire.h>  //載入I2C函式庫
 #include <SeeedOLED.h> //載入SeeedOLED函式庫
-#include <HttpClient.h>
+char info[] = "None";
+int oldSize = 4, newSize = 0;
 
 // DHT
 #include "DHT.h"
@@ -31,6 +38,9 @@ void setup() {
   pinMode(dustPin, INPUT);
   starttime = millis();//get the current time;
   
+  // Button
+  pinMode(buttonPin, INPUT);
+  
   // OLED
   Wire.begin();
   SeeedOled.init();  
@@ -38,7 +48,9 @@ void setup() {
   SeeedOled.setNormalDisplay(); //設定螢幕為正常模式(非反白)
   SeeedOled.setPageMode();  //設定尋址模式頁模式
   SeeedOled.setTextXY(0,0); //設定啟始坐標
-  SeeedOled.putString("Temp&Humi&Dust"); 
+  SeeedOled.putString("Smart Satchel"); 
+  //SeeedOled.setTextXY(5,0);
+  //SeeedOled.putString("No message");
 
   //Bridge
   Bridge.begin();
@@ -47,6 +59,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  buttonState = digitalRead(buttonPin);
+  Serial.println(buttonState);
+  if (buttonState != buttonState_old){
+    SeeedOled.clearDisplay();
+  }
+  buttonState_old = buttonState;
+//  if (stateChange == ture){
+//     SeeedOled.clearDisplay();
+//     stateChange = false;
+//  }
+  
   float h = dht.readHumidity();
   float t = dht.readTemperature();
       
@@ -74,29 +97,59 @@ void loop() {
         
   lowpulseoccupancy = 0;
   starttime = millis();
+  
+  // Read the State of the pushbutton value
 
   // OLED
-  SeeedOled.setTextXY(1,0); //設定啟始坐標
-  SeeedOled.putString("Temp: "); 
-  SeeedOled.putNumber(t); 
-  SeeedOled.putString(" *C"); 
-  SeeedOled.setTextXY(2,0); //設定啟始坐標
-  SeeedOled.putString("Humidity: "); 
-  SeeedOled.putNumber(h); 
-  SeeedOled.putString(" %"); 
-  SeeedOled.setTextXY(3,0); //設定啟始坐標
-  SeeedOled.putString("Dust: "); 
-  SeeedOled.putFloat(concentration,2);
-  SeeedOled.setTextXY(4,0); //設定啟始坐標
-  SeeedOled.putString("PM25: "); 
-  SeeedOled.putFloat(concentrationPM25_ugm3,2);
+  if (buttonState == 0){
+    SeeedOled.setTextXY(0,0); //設定啟始坐標
+    SeeedOled.putString("Smart Satchel");
+    SeeedOled.setTextXY(1,0); //設定啟始坐標
+    SeeedOled.putString("Temp: "); 
+    SeeedOled.putNumber(t); 
+    SeeedOled.putString(" *C"); 
+    SeeedOled.setTextXY(2,0); //設定啟始坐標
+    SeeedOled.putString("Humidity: "); 
+    SeeedOled.putNumber(h); 
+    SeeedOled.putString(" %"); 
+    SeeedOled.setTextXY(3,0); //設定啟始坐標
+    SeeedOled.putString("Dust: "); 
+    SeeedOled.putFloat(concentration,2);
+    SeeedOled.setTextXY(4,0); //設定啟始坐標
+    SeeedOled.putString("PM25: "); 
+    SeeedOled.putFloat(concentrationPM25_ugm3,2);
+    SeeedOled.setTextXY(5,0); //設定啟始坐標
+    SeeedOled.putString(info); 
+  }
+
+  if (buttonState == 1){
+    SeeedOled.setTextXY(0,0);
+    SeeedOled.putString("Date: ");
+    SeeedOled.putString("Monday");
+    SeeedOled.setTextXY(1,0);
+    SeeedOled.putString("English Chinese");
+    SeeedOled.setTextXY(2,0);
+    SeeedOled.putString("Math Music");
+    
+}
    
   //Bridge
   Bridge.put("t",String(t));
   Bridge.put("h",String(h));
   Bridge.put("d",String(concentrationPM25_ugm3));
+  Bridge.get("i",info, 6);
 
-
+  for (int i = 0; i < sizeof(info); i++){
+    if (info[i] != '\0')
+      newSize ++;
+  }
+  if (newSize != oldSize){
+    SeeedOled.setTextXY(5,0); //設定啟始坐標
+    SeeedOled.putString("                ");
+    oldSize = newSize;
+  }
+  newSize = 0;
+  
   delay(1000); //每秒回傳一次資料
 }
 
