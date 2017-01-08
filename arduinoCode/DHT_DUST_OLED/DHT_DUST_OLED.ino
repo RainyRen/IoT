@@ -1,14 +1,20 @@
 //按鈕
 const int buttonPin = 5;
+const int emergencyPin = 6;
 int buttonState = 0;
 int buttonState_old = 0;
-bool stateChange = false;
+//bool stateChange = false;
 
 // OLED
 #include <Wire.h>  //載入I2C函式庫
 #include <SeeedOLED.h> //載入SeeedOLED函式庫
 char info[] = "None";
 int oldSize = 4, newSize = 0;
+char Schedule[2][8][10] = 
+{
+  {"Math ","Chinese ","English ","Physics ","Chem ","History ","Geogr ","P.E "},
+  {"English ","Physics ","Music ","Arts ","P.E ","Chinese ","Math ","Chem "}
+};
 
 // DHT
 #include "DHT.h"
@@ -40,6 +46,7 @@ void setup() {
   
   // Button
   pinMode(buttonPin, INPUT);
+  pinMode(emergencyPin, INPUT);
   
   // OLED
   Wire.begin();
@@ -47,10 +54,6 @@ void setup() {
   SeeedOled.clearDisplay();  //清除螢幕
   SeeedOled.setNormalDisplay(); //設定螢幕為正常模式(非反白)
   SeeedOled.setPageMode();  //設定尋址模式頁模式
-  SeeedOled.setTextXY(0,0); //設定啟始坐標
-  SeeedOled.putString("Smart Satchel"); 
-  //SeeedOled.setTextXY(5,0);
-  //SeeedOled.putString("No message");
 
   //Bridge
   Bridge.begin();
@@ -59,8 +62,10 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  int emergencyState = 0;
   buttonState = digitalRead(buttonPin);
-  Serial.println(buttonState);
+  emergencyState = digitalRead(emergencyPin);
+  Serial.println(emergencyState);
   if (buttonState != buttonState_old){
     SeeedOled.clearDisplay();
   }
@@ -103,7 +108,7 @@ void loop() {
   // OLED
   if (buttonState == 0){
     SeeedOled.setTextXY(0,0); //設定啟始坐標
-    SeeedOled.putString("Smart Satchel");
+    SeeedOled.putString("Smart Bag");
     SeeedOled.setTextXY(1,0); //設定啟始坐標
     SeeedOled.putString("Temp: "); 
     SeeedOled.putNumber(t); 
@@ -125,18 +130,28 @@ void loop() {
   if (buttonState == 1){
     SeeedOled.setTextXY(0,0);
     SeeedOled.putString("Date: ");
-    SeeedOled.putString("Monday");
+    SeeedOled.putString("Thursday");
     SeeedOled.setTextXY(1,0);
-    SeeedOled.putString("English Chinese");
+    SeeedOled.putString(Schedule[0][0]);
+    SeeedOled.putString(Schedule[0][1]);
     SeeedOled.setTextXY(2,0);
-    SeeedOled.putString("Math Music");
-    
+    SeeedOled.putString(Schedule[0][2]);
+    SeeedOled.putString(Schedule[0][3]);
+    SeeedOled.setTextXY(3,0);
+    SeeedOled.putString(Schedule[0][4]);
+    SeeedOled.putString(Schedule[0][5]);
+    SeeedOled.setTextXY(4,0);
+    SeeedOled.putString(Schedule[0][6]);
+    SeeedOled.putString(Schedule[0][7]);
+    SeeedOled.setTextXY(5,0);
+    SeeedOled.putString("Have a good day!");
 }
    
   //Bridge
   Bridge.put("t",String(t));
   Bridge.put("h",String(h));
   Bridge.put("d",String(concentrationPM25_ugm3));
+  Bridge.put("e",String(emergencyState));
   Bridge.get("i",info, 6);
 
   for (int i = 0; i < sizeof(info); i++){
